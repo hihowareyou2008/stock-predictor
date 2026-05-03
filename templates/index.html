@@ -31,7 +31,6 @@
     font-size: 14px;
   }
 
-  /* ── Header ── */
   .header {
     background: var(--surface);
     border-bottom: 1px solid var(--border);
@@ -68,14 +67,12 @@
   }
   @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 
-  /* ── Layout ── */
   .layout {
     display: grid;
     grid-template-columns: 280px 1fr;
     height: calc(100vh - 60px);
   }
 
-  /* ── Sidebar ── */
   .sidebar {
     background: var(--surface);
     border-right: 1px solid var(--border);
@@ -95,8 +92,23 @@
     margin-bottom: 0.6rem;
   }
 
-  /* Stock Buttons */
   .stock-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+  .search-box {
+    width: 100%;
+    margin-bottom: 0.75rem;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text);
+    font: inherit;
+  }
+  .search-box::placeholder { color: var(--muted); }
+  .stock-meta {
+    font-size: 0.7rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
   .stock-btn {
     background: var(--surface2);
     border: 1.5px solid var(--border);
@@ -115,17 +127,24 @@
     color: var(--text);
   }
   .stock-btn .s-name { font-size: 0.85rem; font-weight: 700; display: block; }
+  .stock-btn .s-company {
+    font-size: 0.65rem;
+    color: var(--text);
+    opacity: 0.8;
+    margin-top: 4px;
+    display: block;
+    line-height: 1.25;
+  }
   .stock-btn .s-price {
     font-size: 0.72rem;
     color: var(--muted);
-    margin-top: 2px;
+    margin-top: 4px;
     display: block;
   }
   .stock-btn .s-change { font-size: 0.65rem; font-weight: 600; }
   .up { color: var(--success); }
   .down { color: var(--danger); }
 
-  /* Form Controls */
   .ctrl { display: flex; flex-direction: column; gap: 5px; margin-bottom: 10px; }
   .ctrl label { font-size: 0.75rem; color: var(--muted); font-weight: 500; }
 
@@ -172,7 +191,6 @@
     text-align: right;
   }
 
-  /* Run Button */
   .run-btn {
     width: 100%;
     background: linear-gradient(135deg, var(--accent), var(--accent2));
@@ -193,7 +211,6 @@
   .run-btn:active { transform: translateY(0); filter: brightness(0.95); }
   .run-btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
 
-  /* Metrics */
   .metrics-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
   .metric-card {
     background: var(--surface2);
@@ -218,7 +235,6 @@
   .metric-card .mc-val.warn { color: var(--warning); }
   .metric-card .mc-val.bad  { color: var(--danger); }
 
-  /* Feature Importance */
   .fi-row { display: flex; align-items: center; gap: 8px; margin-bottom: 7px; }
   .fi-name { font-size: 0.7rem; color: var(--muted); min-width: 90px; font-family: monospace; }
   .fi-track { flex: 1; height: 5px; background: var(--border); border-radius: 3px; }
@@ -227,7 +243,6 @@
 
   hr.sep { border: none; border-top: 1px solid var(--border); }
 
-  /* ── Main Content ── */
   .main {
     display: flex;
     flex-direction: column;
@@ -236,7 +251,6 @@
     overflow-y: auto;
   }
 
-  /* Prediction Hero */
   .pred-hero {
     background: linear-gradient(135deg, rgba(59,130,246,0.08), rgba(29,78,216,0.04));
     border: 1.5px solid rgba(59,130,246,0.25);
@@ -253,7 +267,6 @@
   .ph-divider           { width: 1px; height: 50px; background: var(--border); }
   .ph-section.right     { text-align: right; }
 
-  /* Chart Cards */
   .chart-card {
     background: var(--surface);
     border: 1px solid var(--border);
@@ -272,7 +285,6 @@
   .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.7rem; color: var(--muted); }
   .legend-dot  { width: 10px; height: 3px; border-radius: 2px; }
 
-  /* Empty State */
   .empty-state {
     flex: 1;
     display: flex;
@@ -301,7 +313,6 @@
     color: var(--muted);
   }
 
-  /* Spinner */
   .spinner {
     width: 20px; height: 20px;
     border: 2px solid rgba(255,255,255,0.2);
@@ -328,33 +339,28 @@
     box-shadow: 0 8px 32px rgba(0,0,0,0.4);
   }
   .toast.error { border-color: var(--danger); color: var(--danger); }
-
-  .rows-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
 </style>
 </head>
 <body>
 
-<!-- ── Header ──────────────────────────────────────────────────────── -->
 <header class="header">
   <div class="header-left">
     <span class="logo">StockML Predictor</span>
     <span class="badge">Python Backend</span>
   </div>
   <div class="header-right">
-    <span class="status-dot"></span>Flask API &bull; scikit-learn &bull; 365 trading days
+    <span class="status-dot"></span>Flask API &bull; scikit-learn &bull; real adjusted-close history
   </div>
 </header>
 
-<!-- ── App Layout ─────────────────────────────────────────────────── -->
 <div class="layout">
-
-  <!-- Sidebar -->
   <aside class="sidebar">
-
     <div>
       <div class="section-title">Asset Selection</div>
+      <input class="search-box" id="stockSearch" type="text" placeholder="Search ticker or company">
+      <div class="stock-meta" id="stockMeta">Loading available stocks...</div>
       <div class="stock-grid" id="stockGrid">
-        <div class="stock-btn" style="grid-column:1/-1; text-align:center; font-size:0.75rem;">Loading stocks…</div>
+        <div class="stock-btn" style="grid-column:1/-1; text-align:center; font-size:0.75rem;">Loading stocks...</div>
       </div>
     </div>
 
@@ -406,10 +412,10 @@
     <div>
       <div class="section-title">Model Metrics</div>
       <div class="metrics-grid">
-        <div class="metric-card"><div class="mc-label">MAE</div><div class="mc-val" id="mMAE">—</div></div>
-        <div class="metric-card"><div class="mc-label">RMSE</div><div class="mc-val" id="mRMSE">—</div></div>
-        <div class="metric-card"><div class="mc-label">R²</div><div class="mc-val" id="mR2">—</div></div>
-        <div class="metric-card"><div class="mc-label">MAPE</div><div class="mc-val" id="mMAPE">—</div></div>
+        <div class="metric-card"><div class="mc-label">MAE</div><div class="mc-val" id="mMAE">-</div></div>
+        <div class="metric-card"><div class="mc-label">RMSE</div><div class="mc-val" id="mRMSE">-</div></div>
+        <div class="metric-card"><div class="mc-label">R2</div><div class="mc-val" id="mR2">-</div></div>
+        <div class="metric-card"><div class="mc-label">MAPE</div><div class="mc-val" id="mMAPE">-</div></div>
       </div>
     </div>
 
@@ -417,12 +423,9 @@
       <div class="section-title">Feature Importance</div>
       <div id="featureImportance"><div style="color:var(--muted);font-size:0.75rem;">Run model to see importances</div></div>
     </div>
-
   </aside>
 
-  <!-- Main -->
   <main class="main" id="mainArea">
-
     <div class="empty-state" id="emptyState">
       <div class="empty-icon">&#x2728;</div>
       <h3>Ready to predict</h3>
@@ -433,20 +436,17 @@
         <span class="pill">Random Forest</span>
       </div>
     </div>
-
   </main>
 </div>
 
 <div class="toast" id="toast"></div>
 
-<!-- ── Scripts ─────────────────────────────────────────────────────── -->
 <script>
-/* ── State ─────────────────────────────────────────────── */
 let selectedStock = null;
-let priceChart    = null;
-let residChart    = null;
+let priceChart = null;
+let residChart = null;
+let searchTimer = null;
 
-/* ── Slider bindings ────────────────────────────────────── */
 document.getElementById("sliderWindow").addEventListener("input", e => {
   document.getElementById("dispWindow").textContent = e.target.value + " days";
 });
@@ -457,39 +457,50 @@ document.getElementById("sliderHorizon").addEventListener("input", e => {
   document.getElementById("dispHorizon").textContent = e.target.value + " days";
 });
 
-/* ── Toast ──────────────────────────────────────────────── */
-function showToast(msg, isError=false) {
+function showToast(msg, isError = false) {
   const t = document.getElementById("toast");
   t.textContent = msg;
-  t.className   = "toast" + (isError ? " error" : "");
+  t.className = "toast" + (isError ? " error" : "");
   t.style.display = "block";
   setTimeout(() => t.style.display = "none", 3500);
 }
 
-/* ── Load Stocks ────────────────────────────────────────── */
 async function loadStocks() {
+  const query = document.getElementById("stockSearch").value.trim();
   try {
-    const res  = await fetch("/api/stocks");
+    const res = await fetch(`/api/stocks?q=${encodeURIComponent(query)}`);
     const data = await res.json();
     renderStockGrid(data.stocks);
+    const label = data.query
+      ? `Showing ${data.count} of ${data.total_matches} matches (${data.total_available} total)`
+      : `Showing ${data.count} of ${data.total_available} stocks`;
+    document.getElementById("stockMeta").textContent = label;
   } catch (err) {
-    showToast("Could not reach API — is Flask running?", true);
+    showToast("Could not reach API - is Flask running?", true);
   }
 }
 
 function renderStockGrid(stocks) {
   const grid = document.getElementById("stockGrid");
   grid.innerHTML = "";
+  if (!stocks.length) {
+    grid.innerHTML = '<div class="stock-btn" style="grid-column:1/-1; text-align:center; font-size:0.75rem;">No stocks match your search.</div>';
+    return;
+  }
   stocks.forEach(s => {
-    const btn  = document.createElement("button");
+    const btn = document.createElement("button");
     const sign = s.change >= 0 ? "+" : "";
-    const cls  = s.change >= 0 ? "up" : "down";
+    const cls = s.change >= 0 ? "up" : "down";
     btn.className = "stock-btn";
+    if (selectedStock === s.series_key) {
+      btn.classList.add("active");
+    }
     btn.innerHTML = `
-      <span class="s-name">${s.name.replace("_"," ")}</span>
+      <span class="s-name">${s.ticker}</span>
+      <span class="s-company">${s.security_name}</span>
       <span class="s-price">$${s.latest.toFixed(2)}</span>
       <span class="s-change ${cls}">${sign}${s.change}%</span>`;
-    btn.onclick = () => selectStock(s.name, btn);
+    btn.onclick = () => selectStock(s.series_key, btn);
     grid.appendChild(btn);
   });
 }
@@ -500,45 +511,52 @@ function selectStock(name, btn) {
   selectedStock = name;
 }
 
-/* ── Run Prediction ─────────────────────────────────────── */
+document.getElementById("stockSearch").addEventListener("input", () => {
+  clearTimeout(searchTimer);
+  searchTimer = setTimeout(loadStocks, 200);
+});
+
 async function runPrediction() {
-  if (!selectedStock) { showToast("Please select a stock first.", true); return; }
+  if (!selectedStock) {
+    showToast("Please select a stock first.", true);
+    return;
+  }
 
   const btn = document.getElementById("runBtn");
-  btn.disabled   = true;
-  btn.innerHTML  = '<span class="spinner"></span>Training model…';
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span>Training model...';
 
   const payload = {
-    stock:   selectedStock,
-    model:   document.getElementById("selModel").value,
-    window:  parseInt(document.getElementById("sliderWindow").value),
-    split:   parseInt(document.getElementById("sliderSplit").value) / 100,
+    stock: selectedStock,
+    model: document.getElementById("selModel").value,
+    window: parseInt(document.getElementById("sliderWindow").value),
+    split: parseInt(document.getElementById("sliderSplit").value) / 100,
     horizon: parseInt(document.getElementById("sliderHorizon").value),
   };
 
   try {
-    const res  = await fetch("/api/train", {
-      method:  "POST",
+    const res = await fetch("/api/train", {
+      method: "POST",
       headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify(payload),
+      body: JSON.stringify(payload),
     });
 
-    if (!res.ok) { throw new Error(await res.text()); }
+    if (!res.ok) {
+      throw new Error(await res.text());
+    }
     const data = await res.json();
     renderResults(data);
     showToast("Model trained successfully!");
   } catch (err) {
     showToast("Error: " + err.message, true);
   } finally {
-    btn.disabled  = false;
+    btn.disabled = false;
     btn.innerHTML = "Run Prediction Model";
   }
 }
 
-/* ── Render Results ─────────────────────────────────────── */
 function renderResults(data) {
   document.getElementById("emptyState").style.display = "none";
-
   updateMetrics(data.metrics);
   updateFeatureImportance(data.feature_importance);
   renderHero(data);
@@ -546,73 +564,71 @@ function renderResults(data) {
   renderResidChart(data);
 }
 
-/* Metrics */
 function updateMetrics(m) {
   const r2Cls = m.r2 >= 0.9 ? "good" : m.r2 >= 0.7 ? "warn" : "bad";
-  document.getElementById("mMAE").textContent  = m.mae.toFixed(3);
+  document.getElementById("mMAE").textContent = m.mae.toFixed(3);
   document.getElementById("mRMSE").textContent = m.rmse.toFixed(3);
-  document.getElementById("mR2").className     = "mc-val " + r2Cls;
-  document.getElementById("mR2").textContent   = m.r2.toFixed(4);
+  document.getElementById("mR2").className = "mc-val " + r2Cls;
+  document.getElementById("mR2").textContent = m.r2.toFixed(4);
   document.getElementById("mMAPE").textContent = m.mape.toFixed(2) + "%";
 }
 
-/* Feature Importance */
 function updateFeatureImportance(items) {
-  const top  = items.slice(0, 8);
-  const max  = top[0]?.importance || 1;
+  const top = items.slice(0, 8);
+  const max = top[0]?.importance || 1;
   const html = top.map(f => `
     <div class="fi-row">
       <span class="fi-name">${f.feature}</span>
-      <div class="fi-track"><div class="fi-fill" style="width:${(f.importance/max*100).toFixed(1)}%"></div></div>
+      <div class="fi-track"><div class="fi-fill" style="width:${(f.importance / max * 100).toFixed(1)}%"></div></div>
       <span class="fi-pct">${(f.importance * 100).toFixed(1)}%</span>
     </div>`).join("");
   document.getElementById("featureImportance").innerHTML = html;
 }
 
-/* Hero Box */
 function renderHero(data) {
   const main = document.getElementById("mainArea");
-
   let hero = document.getElementById("predHero");
   if (!hero) {
     hero = document.createElement("div");
-    hero.id        = "predHero";
+    hero.id = "predHero";
     hero.className = "pred-hero";
     main.insertBefore(hero, main.firstChild);
   }
 
-  const fc     = data.forecast;
-  const next   = fc.prices[0];
-  const ciLow  = fc.ci_low[0];
+  const fc = data.forecast;
+  const next = fc.prices[0];
+  const ciLow = fc.ci_low[0];
   const ciHigh = fc.ci_high[0];
-  const last   = data.test.actual[data.test.actual.length - 1];
-  const chg    = ((next - last) / last * 100).toFixed(2);
-  const sign   = chg >= 0 ? "+" : "";
+  const last = data.test.actual[data.test.actual.length - 1];
+  const chg = ((next - last) / last * 100).toFixed(2);
+  const sign = chg >= 0 ? "+" : "";
   const chgCls = chg >= 0 ? "up" : "down";
-  const modelLabel = {linear:"Linear Regression", poly:"Polynomial Regression", rf:"Random Forest"}[data.model];
+  const modelLabel = {
+    linear: "Linear Regression",
+    poly: "Polynomial Regression",
+    rf: "Random Forest"
+  }[data.model];
 
   hero.innerHTML = `
     <div class="ph-section">
-      <div class="ph-label">Next-day Forecast · ${data.stock.replace("_"," ")}</div>
+      <div class="ph-label">Next-day Forecast · ${data.ticker}</div>
       <div class="ph-value">$${next.toFixed(2)}</div>
-      <div class="ph-sub">${modelLabel} · Window: ${data.window}d</div>
+      <div class="ph-sub">${data.security_name} · ${modelLabel} · Window: ${data.window}d</div>
     </div>
     <div class="ph-divider"></div>
     <div class="ph-section right">
       <div class="ph-label">95% Confidence Interval</div>
-      <div class="ph-value" style="font-size:1.2rem;">$${ciLow.toFixed(2)} – $${ciHigh.toFixed(2)}</div>
+      <div class="ph-value" style="font-size:1.2rem;">$${ciLow.toFixed(2)} - $${ciHigh.toFixed(2)}</div>
       <div class="ph-sub"><span class="${chgCls}">${sign}${chg}%</span> vs last known price</div>
     </div>`;
 }
 
-/* Price Chart */
 function renderPriceChart(data) {
   const main = document.getElementById("mainArea");
-
   let card = document.getElementById("priceCard");
   if (!card) {
     card = document.createElement("div");
-    card.id        = "priceCard";
+    card.id = "priceCard";
     card.className = "chart-card";
     card.innerHTML = `
       <div class="chart-header">
@@ -634,23 +650,22 @@ function renderPriceChart(data) {
   }
 
   document.getElementById("priceChartSub").textContent =
-    `Train: ${data.train.dates[0]} → ${data.train.dates.at(-1)}  |  Test: ${data.test.dates[0]} → ${data.test.dates.at(-1)}`;
+    `${data.ticker} · ${data.security_name} · Train: ${data.train.dates[0]} -> ${data.train.dates.at(-1)} | Test: ${data.test.dates[0]} -> ${data.test.dates.at(-1)}`;
 
-  if (priceChart) priceChart.destroy();
+  if (priceChart) {
+    priceChart.destroy();
+  }
 
   const trainLen = data.train.dates.length;
-  const testLen  = data.test.dates.length;
-  const fcLen    = data.forecast.dates.length;
+  const testLen = data.test.dates.length;
+  const fcLen = data.forecast.dates.length;
 
-  // Pad arrays so datasets align on a shared x-axis
   const allDates = [...data.train.dates, ...data.test.dates, ...data.forecast.dates];
-  const trainArr = [...data.train.actual,  ...Array(testLen + fcLen).fill(null)];
-  const actualArr= [...Array(trainLen).fill(null), ...data.test.actual,  ...Array(fcLen).fill(null)];
-  const predArr  = [...Array(trainLen).fill(null), ...data.test.predicted,...Array(fcLen).fill(null)];
-  const fcArr    = [...Array(trainLen + testLen).fill(null), ...data.forecast.prices];
-
-  // Forecast confidence band as separate datasets (fill between)
-  const fcLow  = [...Array(trainLen + testLen).fill(null), ...data.forecast.ci_low];
+  const trainArr = [...data.train.actual, ...Array(testLen + fcLen).fill(null)];
+  const actualArr = [...Array(trainLen).fill(null), ...data.test.actual, ...Array(fcLen).fill(null)];
+  const predArr = [...Array(trainLen).fill(null), ...data.test.predicted, ...Array(fcLen).fill(null)];
+  const fcArr = [...Array(trainLen + testLen).fill(null), ...data.forecast.prices];
+  const fcLow = [...Array(trainLen + testLen).fill(null), ...data.forecast.ci_low];
   const fcHigh = [...Array(trainLen + testLen).fill(null), ...data.forecast.ci_high];
 
   priceChart = new Chart(document.getElementById("priceChart"), {
@@ -738,31 +753,29 @@ function renderPriceChart(data) {
       scales: {
         x: {
           ticks: { color: "#475569", maxTicksLimit: 10, font: { size: 11 } },
-          grid:  { color: "#1e2535" },
+          grid: { color: "#1e2535" },
         },
         y: {
           ticks: { color: "#475569", callback: v => "$" + v.toFixed(0), font: { size: 11 } },
-          grid:  { color: "#1e2535" },
+          grid: { color: "#1e2535" },
         },
       },
     },
   });
 }
 
-/* Residuals Chart */
 function renderResidChart(data) {
   const main = document.getElementById("mainArea");
-
   let card = document.getElementById("residCard");
   if (!card) {
     card = document.createElement("div");
-    card.id        = "residCard";
+    card.id = "residCard";
     card.className = "chart-card";
     card.innerHTML = `
       <div class="chart-header">
         <div>
-          <div class="chart-title">Residuals (Actual − Predicted)</div>
-          <div class="chart-sub">Errors on the test set — closer to 0 is better</div>
+          <div class="chart-title">Residuals (Actual - Predicted)</div>
+          <div class="chart-sub">Errors on the test set - closer to 0 is better</div>
         </div>
       </div>
       <div style="position:relative;height:200px;">
@@ -771,7 +784,9 @@ function renderResidChart(data) {
     main.appendChild(card);
   }
 
-  if (residChart) residChart.destroy();
+  if (residChart) {
+    residChart.destroy();
+  }
 
   const colors = data.test.residuals.map(r => r >= 0 ? "#10b981" : "#ef4444");
 
@@ -803,18 +818,17 @@ function renderResidChart(data) {
       scales: {
         x: {
           ticks: { color: "#475569", maxTicksLimit: 10, font: { size: 11 } },
-          grid:  { color: "#1e2535" },
+          grid: { color: "#1e2535" },
         },
         y: {
           ticks: { color: "#475569", font: { size: 11 } },
-          grid:  { color: "#1e2535" },
+          grid: { color: "#1e2535" },
         },
       },
     },
   });
 }
 
-/* ── Boot ───────────────────────────────────────────────── */
 loadStocks();
 </script>
 </body>
